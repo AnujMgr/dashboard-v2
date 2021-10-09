@@ -6,8 +6,6 @@ import * as Yup from "yup";
 
 //https://stackoverflow.com/questions/59595653/how-to-render-an-editable-table-with-formik-2-and-react-table-7
 
-export async function getServerSideProps({ query }) {}
-
 const initialFormData = undefined;
 
 export default function Create() {

@@ -99,7 +99,7 @@ export default function Layout({ children }) {
             className="cursor-pointer"
             onClick={() => handleToggleSidebar(true)}
           >
-            <MenuIcon height="24" width="24" />
+            <MenuIcon height="30" width="30" color="#fff"/>
           </div>
         </div>
 

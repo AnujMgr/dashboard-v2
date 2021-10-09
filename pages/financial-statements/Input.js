@@ -5,7 +5,7 @@ function Input({ name, label, placeholder, validate }) {
   const [field] = useField({ name, type: "text", validate: validate });
   const input = (
     <input
-      className="px-2 py-1 my-1 rounded mr-2 bg-gray-800 text-white"
+      className="px-2 py-2 bg-gray-800 text-white w-full h-full"
       name={name}
       type="text"
       placeholder={placeholder}

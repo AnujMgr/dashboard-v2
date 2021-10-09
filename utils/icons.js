@@ -1,10 +1,10 @@
-const MenuIcon = ({ height, width }) => {
+const MenuIcon = ({ height, width,color }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       height={height !== null ? `${height}` : "24"}
       width={width !== null ? `${width}` : "24"}
-      fill="currentColor"
+      fill={width !== null ? `${color}` : "currentColor"}
       viewBox="0 0 16 16"
     >
       <path
