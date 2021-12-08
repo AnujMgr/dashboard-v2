@@ -1,9 +1,5 @@
-import { useQuery } from "@apollo/client";
 import React, { useState } from "react";
-import Spinner from "../../components/Spinner";
-import { GET_STATEMENT_LINES_BY_STATEMENT_ID } from "../api/queries";
 import prisma from "../../prisma/client";
-import { useRouter } from "next/router";
 
 export async function getServerSideProps({ query }) {
   const statements = await prisma.financialStatement.findMany({});

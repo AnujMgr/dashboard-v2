@@ -10,7 +10,7 @@ function Spinner() {
           borderColor: "#7C3AED",
         }}
       ></div>
-      <div className="absolute text-white">Loading...</div>
+      <div className="absolute text-dark">Loading...</div>
     </div>
   );
 }

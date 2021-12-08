@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Formik, Form, FieldArray, ErrorMessage } from "formik";
-import { Input } from "../../components/form";
-import Toast from "../../components/Toast";
+import { Formik, Form, FieldArray } from "formik";
 import * as Yup from "yup";
+import FormikControl from "../../components/Formik/FormikControl";
 
 //https://stackoverflow.com/questions/59595653/how-to-render-an-editable-table-with-formik-2-and-react-table-7
 
@@ -54,73 +53,106 @@ export default function Create() {
           enableReinitialize
           onSubmit={async (values, { resetForm, setSubmitting }) => {
             try {
-              await saveData(values);
+              // await saveData(values);
+              alert(JSON.stringify(values, undefined, 2));
+
               setSubmitting(false);
               resetForm();
-              <Toast />;
             } catch (err) {
               console.log(err);
             }
           }}
           validationSchema={DisplayingErrorMessagesSchema}
         >
-          {({ values, isSubmitting, errors }) => (
+          {({ values, isSubmitting }) => (
             <Form>
-              <div className="flex flex-col w-60 mb-4">
-                <Input
-                  name="statementName"
-                  placeholder="Enter Statement Name..."
-                />
-                <h1 className="text-red-500">
-                  <ErrorMessage name="statementName" />
-                </h1>
-                <h6 className="text-xs">Statement Name</h6>
+              <div className="grid grid-cols-5 border-b border-gray-600 overflow-x-auto scrollable">
+                <div className="col-span-5 md:col-span-3 mb-3">
+                  <FormikControl
+                    label="Statement Name"
+                    type="input"
+                    control="input"
+                    name="statementName"
+                    placeholder="Enter Statement Name..."
+                  />
+                </div>
+
+                <div className="col-span-3 p-2 bg-gray-700 mb-1">
+                  <h1>Statments</h1>
+                </div>
+                <div className="col-span-2 p-2 bg-gray-700 mb-1">
+                  <h1>Action</h1>
+                </div>
+
+                <FieldArray name="statements">
+                  {(arrayHelpers) => (
+                    <>
+                      {values.statements && values.statements.length > 0 ? (
+                        values.statements.map((statement, index) => (
+                          <>
+                            <div className="col-span-3 mb-1">
+                              <FormikControl
+                                type="input"
+                                control="input"
+                                name={`statements[${index}].name`}
+                                placeholder="Enter Statement Name..."
+                              />
+                            </div>
+                            <div className="col-span-2 mb-1 flex items-start">
+                              <button
+                                type="button"
+                                className="px-3 mt-1 py-1 bg-red-600 ml-2 shadow-md rounded text-white"
+                                onClick={() => arrayHelpers.remove(index)}
+                              >
+                                Remove
+                              </button>
+                            </div>
+                          </>
+                        ))
+                      ) : (
+                        <p>Click on Add to add fields..</p>
+                      )}
+
+                      <div className="w-full flex mt-4">
+                        <button
+                          className="px-3 py-1 bg-green-600 shadow-md rounded"
+                          type="button"
+                          onClick={() =>
+                            arrayHelpers.push({
+                              name: "",
+                              parentId: 0,
+                              unit: "Rs.",
+                            })
+                          }
+                        >
+                          Add
+                        </button>
+
+                        {isSubmitting ? (
+                          <button
+                            type="submit"
+                            className="px-3 py-1 bg-gray-300 ml-2 shadow-md rounded cursor-not-allowed"
+                            disabled={isSubmitting}
+                          >
+                            Submitting
+                          </button>
+                        ) : (
+                          <button
+                            type="submit"
+                            className="px-3 py-1 bg-blue-900 ml-2 shadow-md rounded"
+                            disabled={isSubmitting}
+                          >
+                            Submit
+                          </button>
+                        )}
+                      </div>
+                    </>
+                  )}
+                </FieldArray>
               </div>
-              <FieldArray name="statements">
+              {/* <FieldArray name="statements">
                 {(arrayHelpers) => (
                   <div className="overflow-x-auto scrollable">
-                    <table className="table-auto">
-                      <thead>
-                        <tr>
-                          <th className="text-white">S.N</th>
-                          <th className="text-white">Action</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {values.statements && values.statements.length > 0 ? (
-                          values.statements.map((statement, index) => (
-                            <tr key={index}>
-                              <td className="felx">
-                                <Input
-                                  name={`statements[${index}].name`}
-                                  placeholder="Enter Statement Name..."
-                                />
-                                <br />
-                                <span className="text-red-500">
-                                  <ErrorMessage
-                                    name={`statements[${index}].name`}
-                                  />
-                                </span>
-                              </td>
-                              <td className="flex">
-                                <button
-                                  type="button"
-                                  className="px-3 py-1 bg-red-600 ml-2 shadow-md rounded text-white"
-                                  onClick={() => arrayHelpers.remove(index)}
-                                >
-                                  Remove
-                                </button>
-                              </td>
-                            </tr>
-                          ))
-                        ) : (
-                          <tr>
-                            <td>Click on Add to add fields..</td>
-                          </tr>
-                        )}
-                      </tbody>
-                    </table>
-
                     <div className="w-full flex mt-4">
                       <button
                         className="px-3 py-1 bg-green-600 shadow-md rounded"
@@ -156,7 +188,7 @@ export default function Create() {
                     </div>
                   </div>
                 )}
-              </FieldArray>
+              </FieldArray> */}
             </Form>
           )}
         </Formik>
@@ -212,3 +244,57 @@ export default function Create() {
 //     </div>
 //   );
 // }
+{
+  /* <Input
+                  name="statementName"
+                  placeholder="Enter Statement Name..."
+                />
+                <h1 className="text-red-500">
+                  <ErrorMessage name="statementName" />
+                </h1>
+                <h6 className="text-xs">Statement Name</h6> */
+}
+
+{
+  /* <table className="table-auto">
+                      <thead>
+                        <tr>
+                          <th className="text-white">S.N</th>
+                          <th className="text-white">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {values.statements && values.statements.length > 0 ? (
+                          values.statements.map((statement, index) => (
+                            <tr key={index}>
+                              <td className="felx">
+                                <Input
+                                  name={`statements[${index}].name`}
+                                  placeholder="Enter Statement Name..."
+                                />
+                                <br />
+                                <span className="text-red-500">
+                                  <ErrorMessage
+                                    name={`statements[${index}].name`}
+                                  />
+                                </span>
+                              </td>
+                              <td className="flex">
+                                <button
+                                  type="button"
+                                  className="px-3 py-1 bg-red-600 ml-2 shadow-md rounded text-white"
+                                  onClick={() => arrayHelpers.remove(index)}
+                                >
+                                  Remove
+                                </button>
+                              </td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td>Click on Add to add fields..</td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table> */
+}

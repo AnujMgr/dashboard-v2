@@ -1,7 +1,14 @@
 import React, { useEffect, useState } from "react";
 import Select from "react-select";
 
-const SelectWithSearch = ({ data, id, instanceId, handleInputChange }) => {
+const SelectWithSearch = ({
+  name,
+  options,
+  id,
+  instanceId,
+  handleChange,
+  label,
+}) => {
   const [mounted, setMounted] = useState(false);
 
   // When mounted on client, now we can show the UI
@@ -10,14 +17,22 @@ const SelectWithSearch = ({ data, id, instanceId, handleInputChange }) => {
   if (!mounted) return null;
 
   return (
-    <Select
-      options={data}
-      styles={customStyles}
-      theme={theme}
-      id={id}
-      instanceId={instanceId}
-      onChange={(e) => handleInputChange(e.value)}
-    />
+    <>
+      <Select
+        options={options}
+        styles={customStyles}
+        theme={theme}
+        id={id}
+        instanceId={instanceId}
+        onChange={(e) => handleChange(e)}
+        name={name}
+      />
+      {label ? (
+        <label className="text-xs text-white" htmlFor={id}>
+          {label}
+        </label>
+      ) : null}
+    </>
   );
 };
 

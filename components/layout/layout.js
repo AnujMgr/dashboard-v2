@@ -24,7 +24,6 @@ export default function Layout({ children }) {
         onToggle={handleToggleSidebar}
         breakPoint="md"
         className="col-auto side-bar top-0"
-        // style={{position: "sticky",height: "100vh"}}
       >
         <SidebarHeader>
           <h1 className="text-xl px-4 py-3">Logo</h1>{" "}
@@ -34,16 +33,13 @@ export default function Layout({ children }) {
             <MenuItem
               title="Home"
               icon={<HomeIcon height="20" width="20" />}
-              onClick={() => router.replace("/")}
+              onClick={() => router.push("/")}
             >
               Home
             </MenuItem>
 
             <SubMenu title="Statement's" icon="ST">
-              <MenuItem
-                icon=""
-                onClick={() => router.replace("/statementLines")}
-              >
+              <MenuItem icon="" onClick={() => router.push("/statementLines")}>
                 View
               </MenuItem>
               <MenuItem
@@ -54,7 +50,7 @@ export default function Layout({ children }) {
               </MenuItem>
               <MenuItem
                 icon="M"
-                onClick={() => router.replace("/statementLines/manage")}
+                onClick={() => router.push("/statementLines/manage")}
               >
                 Manage
               </MenuItem>
@@ -63,7 +59,7 @@ export default function Layout({ children }) {
             <SubMenu title="Financial Statements" icon="FS">
               <MenuItem
                 icon=""
-                onClick={() => router.replace("/financial-statements")}
+                onClick={() => router.push("/financial-statements")}
               >
                 View
               </MenuItem>
@@ -78,16 +74,36 @@ export default function Layout({ children }) {
             <MenuItem
               title="Home"
               icon={"Bal"}
-              onClick={() => router.replace("/balancesheet")}
+              onClick={() =>
+                router.push({
+                  pathname: "/balancesheet",
+                })
+              }
             >
               Balance Sheet
             </MenuItem>
             <MenuItem
               title="Home"
               icon={"P&L"}
-              onClick={() => router.replace("/")}
+              onClick={() =>
+                router.push({
+                  pathname: "/",
+                })
+              }
             >
               Profit And Loss
+            </MenuItem>
+
+            <MenuItem
+              title="Home"
+              icon={"XLSX"}
+              onClick={() =>
+                router.push({
+                  pathname: "/uploadFromExcel",
+                })
+              }
+            >
+              Upload From Excel
             </MenuItem>
           </Menu>
         </SidebarContent>
@@ -99,7 +115,7 @@ export default function Layout({ children }) {
             className="cursor-pointer"
             onClick={() => handleToggleSidebar(true)}
           >
-            <MenuIcon height="30" width="30" color="#fff"/>
+            <MenuIcon height="30" width="30" color="#fff" />
           </div>
         </div>
 

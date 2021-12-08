@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Formik, Form, FieldArray, Field, getIn, ErrorMessage } from "formik";
-import Input from "./Input";
-import Toast from "../../components/Toast";
+import { Formik, Form, FieldArray } from "formik";
 import * as Yup from "yup";
 import prisma from "./../../prisma/client";
 import { useRouter } from "next/router";
-import FormikSelect from "../../components/Formik/FormikSelect";
-import FormikInput from "../../components/Formik/FormikInput";
 import FormikControl from "../../components/Formik/FormikControl";
+import SelectWithSearch from "../../components/SelectWithSearch/SelectWithSearch";
 
 //https://stackoverflow.com/questions/59595653/how-to-render-an-editable-table-with-formik-2-and-react-table-7
 
@@ -17,7 +14,6 @@ export async function getServerSideProps({ query }) {
   const statements = await prisma.financialStatement.findMany({});
 
   if (Object.keys(query).length === 0) {
-    const companies = [];
     return { props: { statements, statementLines, companies } };
   }
   const data = await prisma.financialStatementLineSequence.findMany({
@@ -43,50 +39,31 @@ const initialFormData = undefined;
 
 export default function Create({ companies, statementLines, statements }) {
   const router = useRouter();
-
   const [formData, setFormData] = useState(initialFormData);
-  const [statementId, setStatementId] = useState(
-    router.query.hasOwnProperty("statementId") ? router.query.statementId : ""
-  );
-  const [companyId, setCompanyId] = useState(
-    router.query.hasOwnProperty("companyId") ? router.query.statementId : ""
-  );
-  const [quarter, setQuarter] = useState(
-    router.query.hasOwnProperty("quarter") ? router.query.statementId : ""
-  );
-  const [fiscalYear, setFiscalYear] = useState(
-    router.query.hasOwnProperty("fiscalYear") ? router.query.statementId : ""
-  );
-
-  // Select Options
-  const statementLinesOptions = [{ key: "Select Statement", value: "" }];
-  statements.map((line) =>
-    statementLinesOptions.push({ key: line.name, value: line.id })
-  );
-  const companiesOptions = [{ key: "Select Company", value: "" }];
-  companies.map((company) =>
-    companiesOptions.push({ key: company.name, value: company.id })
-  );
 
   const quarterOptions = [
-    { key: "Select Quarter", value: "" },
-    { key: "Q1", value: "Q1" },
-    { key: "Q2", value: "Q2" },
-    { key: "Q3", value: "Q3" },
-    { key: "Q4", value: "Q4" },
+    { id: "Q1", name: "Q1" },
+    { id: "Q2", name: "Q2" },
+    { id: "Q3", name: "Q3" },
+    { id: "Q4", name: "Q4" },
   ];
 
   const fiscalYearOptions = [
-    { key: "Select Fiscal Year", value: "" },
-    { key: "2021", value: "2021" },
-    { key: "2020", value: "2020" },
-    { key: "2019", value: "2019" },
-    { key: "2018", value: "2018" },
-    { key: "2017", value: "2017" },
-    { key: "2016", value: "2016" },
+    { id: "1", name: "2021" },
+    { id: "2", name: "2020" },
+    { id: "3", name: "2019" },
+    { id: "4", name: "2018" },
+    { id: "5", name: "2017" },
+    { id: "6", name: "2016" },
   ];
 
+  const companiesOptions = [];
+  companies.map((company) =>
+    companiesOptions.push({ value: company.id, label: company.name })
+  );
+
   useEffect(() => {
+    setFormData(initialFormData); // To avoid errors from initial values
     // this is replacement for a network call that would load the data from a server
     var noOfStatements = [];
     {
@@ -101,15 +78,21 @@ export default function Create({ companies, statementLines, statements }) {
         quarter: "",
         statements: noOfStatements,
       });
+      console.log("From Outside");
     }, 1000);
-    // Missing dependency array here
-  }, []);
+    // console.log(formData);
 
-  async function saveData(data) {
-    const response = await fetch("/api/financialStatements/statementLines", {
-      method: "POST",
-      body: JSON.stringify(data),
-    });
+    // Missing dependency array here
+  }, [router.query.statementId]);
+
+  async function submitData(data) {
+    const response = await fetch(
+      "/api/financialStatements/financialStatementFacts",
+      {
+        method: "POST",
+        body: JSON.stringify(data),
+      }
+    );
 
     if (!response.ok) {
       throw new Error(response.statusText);
@@ -141,20 +124,27 @@ export default function Create({ companies, statementLines, statements }) {
           enableReinitialize
           onSubmit={async (values, { resetForm, setSubmitting }) => {
             try {
-              await console.log(values);
+              // await console.log(values);
+              // var submitData = [];
+              console.log(values);
               alert(JSON.stringify(values, undefined, 2));
-              // await saveData(values);
+
+              await statementLines.map((line, index) => {
+                values.statements[index]["id"] = line.id;
+              });
+
+              // await submitData(values);
               setSubmitting(false);
               resetForm();
-              // <Toast />;
             } catch (err) {
-              console.log(err);
+              // return <Toast message={err.message} />;
+              console.log(err.message);
             }
           }}
           handleChange={(e) => console.log(e)}
           validationSchema={DisplayingErrorMessagesSchema}
         >
-          {({ values, isSubmitting, errors, handleChange }) => (
+          {({ isSubmitting, handleChange }) => (
             <Form>
               <div className="grid grid-cols-4 gap-2">
                 {/*---------------- Financial Statements ---------------*/}
@@ -162,44 +152,35 @@ export default function Create({ companies, statementLines, statements }) {
                   control="select"
                   label="Financial Statements"
                   name="statementId"
-                  options={statementLinesOptions}
+                  options={statements}
                   // value={statementId}
                   onChange={(e) => {
                     handleChange(e);
-                    setStatementId(e.target.value);
+                    // setStatementId(e.target.value);
                     router.push({
                       pathname: "/financial-statements/create",
                       query: {
                         statementId: e.target.value,
-                        // companyId: companyId,
-                        // fiscalYear: fiscalYear,
-                        // quarter: quarter,
                       },
                     });
                   }}
                 />
 
                 {/*---------------- Company ---------------*/}
-                <FormikControl
+                <div>
+                  <SelectWithSearch
+                    name="companyId"
+                    options={companiesOptions}
+                    label="Company"
+                    handleChange={(e) => handleChange(e)}
+                  />
+                </div>
+                {/* <FormikControl
                   control="select"
                   label="Company"
                   name="companyId"
-                  options={companiesOptions}
-                  value={companyId}
-                  onChange={(e) => {
-                    handleChange(e);
-                    setCompanyId(e.target.value);
-                    // router.push({
-                    //   pathname: "/financial-statements/create",
-                    //   query: {
-                    //     statementId: statementId,
-                    //     companyId: e.target.value,
-                    //     fiscalYear: fiscalYear,
-                    //     quarter: quarter,
-                    //   },
-                    // });
-                  }}
-                />
+                  options={companies}
+                /> */}
 
                 {/*---------------- Quarter ---------------*/}
                 <FormikControl
@@ -207,11 +188,6 @@ export default function Create({ companies, statementLines, statements }) {
                   label="Quarter"
                   name="quarter"
                   options={quarterOptions}
-                  value={quarter}
-                  onChange={(e) => {
-                    handleChange(e);
-                    setQuarter(e.target.value);
-                  }}
                 />
 
                 {/*---------------- FiscalYear ---------------*/}
@@ -220,11 +196,6 @@ export default function Create({ companies, statementLines, statements }) {
                   label="Fiscal Year"
                   name="fiscalYear"
                   options={fiscalYearOptions}
-                  value={fiscalYear}
-                  onChange={(e) => {
-                    handleChange(e);
-                    setFiscalYear(e.target.value);
-                  }}
                 />
               </div>
 
@@ -244,6 +215,7 @@ export default function Create({ companies, statementLines, statements }) {
                         <>
                           <div className="col-span-4 p-2 ">{line.name}</div>
                           <div className="col-span-3">
+                            {/* {console.log(values["statements"][index].amount)} */}
                             <FormikControl
                               type="input"
                               control="input"

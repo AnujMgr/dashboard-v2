@@ -14,10 +14,11 @@ function FormikSelect(props) {
         // onChange={(e) => console.log("data", e)}
         {...rest}
       >
+        <option>Please Select {label}</option>
         {options.map((option) => {
           return (
-            <option key={option.value} value={option.value}>
-              {option.key}
+            <option key={option.id} value={option.id}>
+              {option.name}
             </option>
           );
         })}

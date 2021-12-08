@@ -21,7 +21,7 @@
     cursor: pointer;
     /*background-color: rgba(229, 231, 235, var(--bg-opacity));*/
   }
-  
+
   .custom-scroll::-webkit-scrollbar-track {
     background-color: rgba(229, 231, 235, var(--bg-opacity));
     cursor: pointer;
@@ -46,11 +46,19 @@
     }
   }
 
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    transition: background-color 50000s ease-in-out 0s,
+      color 5000s ease-in-out 0s;
+  }
 
+  /* 
   input:-webkit-autofill,
   input:-webkit-autofill:hover,
   input:-webkit-autofill:focus,
   input:-webkit-autofill:active {
     transition: background-color 5000s ease-in-out 0s;
-  }
+  } */
 }

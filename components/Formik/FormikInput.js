@@ -1,5 +1,5 @@
 import React from "react";
-import { ErrorMessage, Field, useField } from "formik";
+import { ErrorMessage, Field } from "formik";
 
 function FormikInput(props) {
   const { label, name, ...rest } = props;
